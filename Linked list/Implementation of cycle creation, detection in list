@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+/* Node structure */
+struct node {
+    int data;
+    struct node *next;
+};
+struct node *head = NULL;
+/* Append node */
+void append(int data) {
+    struct node *newnode, *temp;
+    newnode = (struct node *)malloc(sizeof(struct node));
+    newnode->data = data;
+    newnode->next = NULL;
+    if (head == NULL) {
+        head = newnode;
+        return;
+    }
+    temp = head;
+    while (temp->next != NULL)
+        temp = temp->next;
+    temp->next = newnode;
+}
+/* Create cycle at given position */
+void createCycle(int pos) {
+    struct node *temp = head;
+    struct node *cycleNode = NULL;
+    int count = 1;
+    while (temp->next != NULL) {
+        if (count == pos)
+            cycleNode = temp;
+        temp = temp->next;
+        count++;
+    }
+    if (cycleNode != NULL)
+        temp->next = cycleNode;
+}
+/* Detect cycle */
+int detectCycle() {
+    struct node *slow = head;
+    struct node *fast = head;
+    while (fast != NULL && fast->next != NULL) {
+        slow = slow->next;
+        fast = fast->next->next;
+
+        if (slow == fast)
+            return 1;
+    }
+    return 0;
+}
+/* Return starting node of cycle */
+struct node* returnCycle() {
+    struct node *slow = head;
+    struct node *fast = head;
+    while (fast != NULL && fast->next != NULL) {
+        slow = slow->next;
+        fast = fast->next->next;
+        if (slow == fast) {
+            slow = head;
+            while (slow != fast) {
+                slow = slow->next;
+                fast = fast->next;
+            }
+            return slow;
+        }
+    }
+    return NULL;
+}
+/* Main function */
+int main() {
+    int n, data, choice, pos;
+    printf("Enter no of nodes: ");
+    scanf("%d", &n);
+    for (int i = 1; i <= n; i++) {
+        printf("Enter data: ");
+        scanf("%d", &data);
+        append(data);
+    }
+    printf("Do you want to create a cycle? (1-Yes / 0-No): ");
+    scanf("%d", &choice);
+    if (choice == 1) {
+        printf("Enter position to connect last node: ");
+        scanf("%d", &pos);
+        createCycle(pos);
+    }
+    if (detectCycle()) {
+        struct node *cycleStart = returnCycle();
+        printf("Cycle detected\n");
+        printf("Cycle starts at node with data: %d\n", cycleStart->data);
+    } else {
+        printf("No cycle detected\n");
+    }
+    return 0;
+}
