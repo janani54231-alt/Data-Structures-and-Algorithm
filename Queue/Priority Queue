@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+/* Priority Queue using Linked List */
+struct node {
+    int data;
+    int priority;
+    struct node *next;
+};
+struct node *front = NULL;
+/* Enqueue operation */
+void enqueue(int data, int priority) {
+    struct node *newnode = (struct node *)malloc(sizeof(struct node));
+    newnode->data = data;
+    newnode->priority = priority;
+    newnode->next = NULL;
+    /* If queue is empty or new node has higher priority */
+    if (front == NULL || priority < front->priority) {
+        newnode->next = front;
+        front = newnode;
+    } else {
+        struct node *temp = front;
+        while (temp->next != NULL &&
+               temp->next->priority <= priority) {
+            temp = temp->next;
+        }
+        newnode->next = temp->next;
+        temp->next = newnode;
+    }
+}
+/* Display operation */
+void display() {
+    if (front == NULL) {
+        printf("Empty\n");
+        return;
+    }
+    struct node *temp = front;
+    printf("Priority Queue:\n");
+    while (temp != NULL) {
+        printf("Data: %d  Priority: %d\n",
+               temp->data, temp->priority);
+        temp = temp->next;
+    }
+}
+/* Main function */
+int main() {
+    int n, data, priority;
+    scanf("%d", &n);
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &data);
+        scanf("%d", &priority);
+        enqueue(data, priority);
+    }
+    display();
+    return 0;
+}
